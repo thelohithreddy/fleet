@@ -1,0 +1,185 @@
+.sidebar {
+  width: 400px;
+  background-color: black;
+  padding: 20px;
+  color: #fff;
+  height: auto;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.calendar h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.days {
+  display: flex;
+  gap: 10px;
+}
+
+.day-name {
+  color: #aaa;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.date {
+  padding: 5px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.date.active {
+  background-color: #1e3c72;
+  color: #fff;
+}
+
+.filters {
+  margin-top: 20px;
+}
+
+.filter-btn {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  background-color: #1e3c72;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.filter-btn:hover {
+  background-color: grey;
+}
+
+.filter-btn:active {
+  background-color: grey;
+  transform: scale(0.98);
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 350px;
+    padding: 15px;
+  }
+  
+  .filter-btn {
+    padding: 8px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 300px;
+    padding: 12px;
+    transform: translateX(-100%);
+    top: 0;
+    height: 100vh;
+  }
+  
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  
+  .calendar h4 {
+    font-size: 15px;
+  }
+  
+  .dates {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+    padding: 10px;
+  }
+  
+  .filter-btn {
+    padding: 7px;
+    font-size: 14px;
+  }
+  
+  .days {
+    gap: 8px;
+  }
+  
+  .date {
+    padding: 4px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: 250px;
+    padding: 8px;
+  }
+  
+  .calendar h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .days {
+    gap: 5px;
+    font-size: 13px;
+  }
+  
+  .dates {
+    gap: 3px;
+    margin-top: 8px;
+  }
+  
+  .date {
+    padding: 3px;
+    font-size: 13px;
+  }
+  
+  .filter-btn {
+    padding: 6px;
+    font-size: 13px;
+    margin: 3px 0;
+  }
+  
+  .filters {
+    margin-top: 15px;
+  }
+}
+
+/* Mobile menu toggle button (add to your HTML) */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: #271944;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 992px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+}

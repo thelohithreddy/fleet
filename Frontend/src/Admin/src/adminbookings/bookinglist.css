@@ -1,0 +1,129 @@
+.bookings-count {
+  color: hsl(0, 0%, 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  
+  
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 0px
+}
+
+.booking-card {
+  background-color: black;
+  opacity: 0.99;
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: grey 0px 0px 7px 0px;
+  width: auto;
+}
+
+.vehicle-info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.booking-details {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.provider {
+  color: #ccc;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.price {
+  color: #ffda00;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+  .booking-list {
+    padding-left: 350px;
+  }
+  
+  .booking-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 992px) {
+  .booking-list {
+    padding-left: 300px;
+  }
+  
+  .vehicle-info {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-list {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .booking-card {
+    padding: 10px;
+  }
+  
+  .booking-details,
+  .provider {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-list {
+    padding-left: 15px;
+    padding-right: 15px;
+    gap: 15px;
+  }
+  
+  .booking-card {
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  .vehicle-info {
+    font-size: 15px;
+  }
+  
+  .price {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 400px) {
+  .booking-list {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 12px;
+  }
+  
+  .vehicle-info {
+    font-size: 14px;
+  }
+  
+  .booking-details,
+  .provider {
+    font-size: 12px;
+  }
+  
+  .price {
+    font-size: 14px;
+  }
+}

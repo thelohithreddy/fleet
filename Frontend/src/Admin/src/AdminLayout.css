@@ -1,0 +1,82 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 0px;
+    margin-left: 0px; /* Adjust this value based on your Nav width */
+    background: linear-gradient(180deg, #0a1825, #142134, #1e3c72);
+    min-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure the nav stays fixed but doesn't block clicks */
+.admin-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.admin-nav > * {
+    pointer-events: auto;
+}
+
+/* Media Queries */
+@media screen and (max-width: 1024px) {
+    .admin-content {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .admin-content {
+        padding: 8px;
+    }
+
+    .admin-nav {
+        height: 60px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .admin-content {
+        padding: 5px;
+        margin-top: 60px;
+    }
+
+    .admin-nav {
+        height: 50px;
+    }
+}
+
+/* For very small screens */
+@media screen and (max-width: 320px) {
+    .admin-content {
+        padding: 3px;
+        margin-top: 50px;
+    }
+}
+
+/* For landscape orientation on mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .admin-nav {
+        height: 45px;
+    }
+
+    .admin-content {
+        margin-top: 45px;
+        padding: 5px;
+    }
+} 

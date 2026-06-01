@@ -1,0 +1,214 @@
+.header_nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: black;
+    color: white;
+    box-shadow: gray 0px 0px 20px 0px;
+    width: 100%;
+    padding: 8px 20px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.logo_nav {
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.logo_nav img {
+    height: 40px;
+    width: auto;
+    margin: 0;
+    transition: height 0.3s ease;
+}
+
+.links_nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.help_nav,
+.booking_nav,
+.logout_nav {
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    background: #1e3c72;
+    cursor: pointer;
+    font-weight: 500;
+    color: white;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.profile_nav {
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 50%;
+    background: #1e3c72;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.help_nav:hover,
+.booking_nav:hover,
+.logout_nav:hover,
+.profile_nav:hover {
+    background: grey;
+    color: black;
+    transform: translateY(-2px);
+}
+
+.help_nav.active,
+.booking_nav.active {
+    background: grey;
+    color: black;
+}
+
+/* Custom popup styles */
+.custom-popup {
+    background-color: black !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 15px !important;
+}
+
+.custom-title {
+    color: white !important;
+    font-size: 24px !important;
+}
+
+.custom-button {
+    background-color: #1e3c72 !important;
+    color: white !important;
+    border-radius: 30px !important;
+    padding: 10px 25px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-button:hover {
+    background-color: grey !important;
+    color: black !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Media Queries */
+@media (min-width: 1200px) {
+    .header_nav {
+        padding: 12px 100px;
+    }
+
+    .logo_nav img {
+        height: 45px;
+    }
+
+    .links_nav {
+        gap: 30px;
+    }
+
+    .help_nav,
+    .booking_nav,
+    .logout_nav {
+        padding: 10px 25px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 992px) {
+    .header_nav {
+        padding: 8px 40px;
+    }
+
+    .links_nav {
+        gap: 15px;
+    }
+
+    .help_nav,
+    .booking_nav,
+    .logout_nav {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header_nav {
+        padding: 8px 20px;
+    }
+
+    .logo_nav img {
+        height: 35px;
+    }
+
+    .links_nav {
+        gap: 10px;
+    }
+
+    .help_nav,
+    .booking_nav,
+    .logout_nav {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .profile_nav {
+        padding: 6px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header_nav {
+        padding: 6px 15px;
+    }
+
+    .logo_nav img {
+        height: 30px;
+    }
+
+    .links_nav {
+        gap: 8px;
+    }
+
+    .help_nav,
+    .booking_nav,
+    .logout_nav {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .profile_nav {
+        padding: 5px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 380px) {
+    .logo_nav img {
+        height: 25px;
+    }
+
+    .links_nav {
+        gap: 5px;
+    }
+
+    .help_nav,
+    .booking_nav,
+    .logout_nav {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+}
