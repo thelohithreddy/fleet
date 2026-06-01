@@ -16,24 +16,40 @@ const adminAuthRoutes = require('./routes/adminAuthRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 
 // CORS configuration
-const allowedOrigins = [
+const localhostOrigins = [
     'http://localhost:5173',
     'http://localhost:5174',
-    process.env.FRONTEND_URL,
-].filter(Boolean);
+];
 
-app.use(cors({
+const productionOrigins = process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(',').map((url) => url.trim().replace(/\/$/, ''))
+    : [];
+
+const allowedOrigins = [...localhostOrigins, ...productionOrigins];
+
+const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error(`CORS blocked: ${origin}`));
+        // Non-browser clients and same-origin requests may omit Origin
+        if (!origin) {
+            return callback(null, true);
         }
+
+        const normalizedOrigin = origin.replace(/\/$/, '');
+
+        if (allowedOrigins.includes(normalizedOrigin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked: ${origin}`));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+    optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json());
