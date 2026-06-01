@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api.js";
 import VehicleCard from "./VehicleCard";
 import "./Vehicle.css";
 
@@ -21,7 +21,7 @@ function DirectVehicleFetcher({ bookingType }) {
         const adminToken = localStorage.getItem("adminToken");
         
         // Make direct API call to admin endpoint
-        const response = await axios.get("/api/admin/vehicles", {
+        const response = await api.get("/admin/vehicles", {
           headers: {
             Authorization: `Bearer ${adminToken}`
           }

@@ -1,13 +1,9 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../src/config/api.js";
 import { jwtDecode } from "jwt-decode"; // To decode the JWT token
 
-// Configure axios defaults
-axios.defaults.baseURL = "http://localhost:5000/api";
-axios.defaults.headers.post["Content-Type"] = "application/json";
-
 // Add auth token to requests
-axios.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -38,7 +34,7 @@ const useUserBookingStore = create((set, get) => ({
 
       if (!userId) throw new Error("Invalid token: userId not found.");
 
-      const response = await axios.get(`/bookings/active/${userId}`);
+      const response = await api.get(`/bookings/active/${userId}`);
       if (response.data.success) {
         set({ activeBookings: response.data.bookings, error: null });
       } else {
@@ -71,7 +67,7 @@ const useUserBookingStore = create((set, get) => ({
 
       if (!userId) throw new Error("Invalid token: userId not found.");
 
-      const response = await axios.get(`/bookings/past/${userId}`);
+      const response = await api.get(`/bookings/past/${userId}`);
       if (response.data.success) {
         set({ pastBookings: response.data.bookings, error: null });
       } else {
@@ -94,7 +90,7 @@ const useUserBookingStore = create((set, get) => ({
   cancelBooking: async (bookingId) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.delete(`/bookings/cancel/${bookingId}`);
+      const response = await api.delete(`/bookings/cancel/${bookingId}`);
       if (response.data.success) {
         set((state) => ({
           activeBookings: state.activeBookings.filter(
@@ -102,7 +98,7 @@ const useUserBookingStore = create((set, get) => ({
           ),
           error: null,
         }));
-  
+
         // Optionally, log the cancelled booking details for debugging
         console.log("Cancelled booking details:", response.data.booking);
       } else {
@@ -123,7 +119,7 @@ const useUserBookingStore = create((set, get) => ({
   submitFeedback: async (bookingId, rating) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post(`/feedback/submit`, {
+      const response = await api.post(`/ratings/submit`, {
         bookingId,
         rating,
       });

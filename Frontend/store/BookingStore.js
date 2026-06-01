@@ -1,13 +1,9 @@
 // BookingStore.js
 import { create } from 'zustand';
-import axios from 'axios';
-
-// Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:5000/api';  // Update this to match your backend URL
-axios.defaults.headers.post['Content-Type'] = 'application/json';
+import api from '../src/config/api.js';
 
 // Add auth token to requests
-axios.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -96,7 +92,7 @@ const useBookingStore = create((set) => ({
       // Simulate a small delay like a real API call
       // await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      const response = await axios.post('/bookings/confirm-booking', bookingData); // API hit
+      const response = await api.post('/bookings/confirm-booking', bookingData); // API hit
       
       console.log("Booking not confirmed but data changed:", response.data);
       return true;

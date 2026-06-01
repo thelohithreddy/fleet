@@ -1,14 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: '/api/users',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+import api from '../src/config/api.js';
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
@@ -39,7 +30,7 @@ const useUserStore = create((set) => ({
   getUserProfile: async () => {
     try {
       set({ loading: true, error: null });
-      const response = await api.get('/profile');
+      const response = await api.get('/users/profile');
       
       if (response.data.success) {
         set({ 
@@ -63,7 +54,7 @@ const useUserStore = create((set) => ({
   updateUserProfile: async (userData) => {
     try {
       set({ loading: true, error: null });
-      const response = await api.put('/profile', userData);
+      const response = await api.put('/users/profile', userData);
       
       if (response.data.success) {
         set({ 
@@ -87,7 +78,7 @@ const useUserStore = create((set) => ({
   getHelpInfo: async () => {
     try {
       set({ loading: true, error: null });
-      const response = await api.get('/help');
+      const response = await api.get('/users/help');
       
       if (response.data.success) {
         set({ loading: false });
@@ -108,7 +99,7 @@ const useUserStore = create((set) => ({
   logout: async () => {
     try {
       set({ loading: true, error: null });
-      const response = await api.post('/logout');
+      const response = await api.post('/users/logout');
       
       if (response.data.success) {
         // Clear user data and token

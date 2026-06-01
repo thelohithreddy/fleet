@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api.js";
 import VehicleCard from "./VehicleCard";
 import "./Vehicle.css";
 import useBookingStore from "../../store/BookingStore";
@@ -39,7 +39,7 @@ function FixedVehicleFetcher({ bookingType }) {
         console.log("Making API call to fetch vehicles...");
         
         // Use the correct endpoint format based on axios configuration
-        const response = await axios.get("/admin/vehicles");
+        const response = await api.get("/admin/vehicles");
         
         console.log("Raw API response:", response);
         console.log("API response data:", response.data);

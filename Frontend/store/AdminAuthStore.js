@@ -1,17 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "axios";
+import api from "../src/config/api.js";
 import useAuthStore from "./AuthStore"; // Import AuthStore
-
-// Axios config
-const api = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // Enable cookies if needed
-});
 
 // Axios interceptor to handle token expiration
 api.interceptors.response.use(

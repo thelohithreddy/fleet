@@ -1,14 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
-
-// Configure axios defaults
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+import api from "../src/config/api.js";
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {

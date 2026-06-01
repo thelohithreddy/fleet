@@ -1,16 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "axios";
-
-// Axios config
-const api = axios.create({
-  baseURL: '/api/auth',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // Enable cookies if needed
-});
+import api from "../src/config/api.js";
 
 // Axios interceptor to handle token expiration
 api.interceptors.response.use(
@@ -68,7 +58,7 @@ const useAuthStore = create(
         if (!email || !password) throw new Error('Email and password are required');
         if (password !== confirmPassword) throw new Error('Passwords do not match');
 
-        const response = await api.post("/send-otp", { email, password, confirmPassword });
+        const response = await api.post("/auth/send-otp", { email, password, confirmPassword });
         if (response.data.success) {
           set({ isOtpSent: true });
           return response.data;
@@ -86,7 +76,7 @@ const useAuthStore = create(
       
           if (!email || !password) throw new Error('Session expired. Please try signing up again.');
       
-          const response = await api.post("/verify-otp", { email, otp, password });
+          const response = await api.post("/auth/verify-otp", { email, otp, password });
       
           if (!response.data.success) {
             return response.data;
@@ -123,7 +113,7 @@ const useAuthStore = create(
       // Login
       login: async (email, password) => {
         try {
-          const response = await api.post("/login", { email, password });
+          const response = await api.post("/auth/login", { email, password });
           const setAuthState = get().setAuthState; // Access setAuthState using get()
 
           if (!response.data.success) {
@@ -170,7 +160,7 @@ const useAuthStore = create(
 
       // Forgot Password
       forgotPassword: async (email) => {
-        const response = await api.post("/forgot-password", { email });
+        const response = await api.post("/auth/forgot-password", { email });
         if (response.data.message) {
           set({ email });
           return response.data;
@@ -181,7 +171,7 @@ const useAuthStore = create(
 
       // Reset Password
       resetPassword: async (email, otp, newPassword) => {
-        const response = await api.post("/reset-password", { email, otp, newPassword });
+        const response = await api.post("/auth/reset-password", { email, otp, newPassword });
         if (response.data.success) {
           return response.data;
         } else {

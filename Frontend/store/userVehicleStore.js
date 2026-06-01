@@ -1,9 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
-
-// Configure axios defaults
-axios.defaults.baseURL = "/api";
-axios.defaults.headers.post["Content-Type"] = "application/json";
+import api from "../src/config/api.js";
 
 // Helper function to normalize vehicle data format
 const normalizeVehicle = (vehicle) => ({
@@ -33,7 +29,7 @@ const useUserVehicleStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       console.log("Search parameters:", searchParams);
-      const response = await axios.get("/vehicles", { params: searchParams });
+      const response = await api.get("/vehicles", { params: searchParams });
       console.log("API response:", response.data);
 
       if (response.data.success) {
@@ -58,7 +54,7 @@ const useUserVehicleStore = create((set, get) => ({
   markVehicleUnavailable: async (vehicleId, returnDate, bookingId) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post(`/vehicles/${vehicleId}/unavailable`, {
+      const response = await api.post(`/vehicles/${vehicleId}/unavailable`, {
         returnDate,
         bookingId,
       });
@@ -83,7 +79,7 @@ const useUserVehicleStore = create((set, get) => ({
   updateVehicleStatus: async (vehicleId, status, bookingId) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.put(`/vehicles/${vehicleId}/status`, {
+      const response = await api.put(`/vehicles/${vehicleId}/status`, {
         status,
         bookingId,
       });
