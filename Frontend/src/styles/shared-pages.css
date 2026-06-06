@@ -1,0 +1,220 @@
+/* Shared page layouts — trips, profile, booking flow */
+.fleet-page {
+  min-height: calc(100vh - var(--fleet-nav-height));
+  background: var(--fleet-bg);
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+.fleet-page__inner {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.fleet-page__header {
+  margin-bottom: 1.5rem;
+}
+
+.fleet-page__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--fleet-text);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem;
+}
+
+.fleet-page__subtitle {
+  font-size: 0.95rem;
+  color: var(--fleet-text-muted);
+  margin: 0;
+}
+
+.fleet-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--fleet-border);
+  margin-bottom: 1.75rem;
+}
+
+.fleet-tabs__link {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fleet-text-muted);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.fleet-tabs__link:hover {
+  color: var(--fleet-text);
+}
+
+.fleet-tabs__link.active {
+  color: var(--fleet-primary);
+  border-bottom-color: var(--fleet-primary);
+}
+
+.fleet-card {
+  background: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: var(--fleet-radius-lg);
+  box-shadow: var(--fleet-shadow);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  transition: box-shadow 0.2s;
+}
+
+.fleet-card:hover {
+  box-shadow: var(--fleet-shadow-lg);
+}
+
+.fleet-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: var(--fleet-surface);
+  border: 1px dashed var(--fleet-border);
+  border-radius: var(--fleet-radius-lg);
+}
+
+.fleet-empty__icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.fleet-empty__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--fleet-text);
+  margin: 0 0 0.5rem;
+}
+
+.fleet-empty__text {
+  color: var(--fleet-text-muted);
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+}
+
+.fleet-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.fleet-btn--primary {
+  background: linear-gradient(135deg, var(--fleet-primary), var(--fleet-primary-dark));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+}
+
+.fleet-btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.35);
+}
+
+.fleet-btn--outline {
+  background: transparent;
+  color: var(--fleet-primary-dark);
+  border: 2px solid var(--fleet-primary);
+}
+
+.fleet-btn--danger {
+  background: #fef2f2;
+  color: var(--fleet-danger);
+  border: 1px solid #fecaca;
+}
+
+.fleet-btn--danger:hover {
+  background: var(--fleet-danger);
+  color: #fff;
+}
+
+.fleet-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fleet-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 1rem;
+  color: var(--fleet-text-muted);
+}
+
+.fleet-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--fleet-border);
+  border-top-color: var(--fleet-primary);
+  border-radius: 50%;
+  animation: fleet-spin 0.7s linear infinite;
+}
+
+@keyframes fleet-spin {
+  to { transform: rotate(360deg); }
+}
+
+.fleet-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.fleet-modal {
+  background: var(--fleet-surface);
+  border-radius: var(--fleet-radius-lg);
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--fleet-shadow-lg);
+}
+
+.fleet-modal h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--fleet-text);
+  margin: 0 0 0.75rem;
+}
+
+.fleet-modal p {
+  color: var(--fleet-text-muted);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.fleet-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fleet-badge--active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.fleet-badge--completed {
+  background: #e0e7ff;
+  color: #3730a3;
+}

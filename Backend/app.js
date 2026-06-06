@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { connectDB } = require('./config/db');
+const { isConnected } = require('./config/db');
 const app = express();
 
 // Connect to MongoDB will be handled in server.js
@@ -63,6 +63,15 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ratings', ratingRoutes);
+
+// Health check (used by Render / monitoring)
+app.get('/health', (_req, res) => {
+    res.status(200).json({
+        status: 'up',
+        mongodb: isConnected() ? 'connected' : 'disconnected',
+        timestamp: new Date().toISOString(),
+    });
+});
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

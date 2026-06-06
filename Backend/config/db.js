@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
+        if (!process.env.MONGO_URI) {
+            console.error('MONGO_URI environment variable is not set');
+            return false;
+        }
+
         // Remove quotes from MONGO_URI if present
         const uri = process.env.MONGO_URI.replace(/"/g, '');
         

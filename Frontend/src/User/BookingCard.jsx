@@ -44,9 +44,12 @@ function BookingCard({ booking }) {
 
   return (
     <div className="booking-card_past">
+      <div className="booking-card_past__header">
+        <h3 className="booking-card_past__title">{booking.vehicleName}</h3>
+        <span className="fleet-badge fleet-badge--completed">Completed</span>
+      </div>
       <div className="details_past">
         <div className="left_past">
-          <h3>{booking.vehicleName}</h3>
           <p>Start Date & Time: {booking.startDate}</p>
           <p>End Date & Time: {booking.endDate}</p>
           <p>Duration: {booking.duration} days</p>

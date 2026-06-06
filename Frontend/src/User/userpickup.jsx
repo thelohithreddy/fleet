@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import "./userpickup.css";
-import Logo from "../../public/greylogo.png";
 import Map from "./map.jpg";
 import { useNavigate, useLocation } from "react-router-dom";
-// to interact with the booking store
 import useBookingStore from '../../store/BookingStore';
 
 function Userpickup() {
@@ -11,77 +9,73 @@ function Userpickup() {
   const navigate = useNavigate();
   const { bookingType, deliveryOption } = location.state || {};
   const [showPopup, setShowPopup] = useState(false);
-
-  // State to manage pickup location
   const [pickupLocation, setPickupLocation] = useState('');
-  
+
   const updateBookingData = useBookingStore((state) => state.updateBookingData);
-  const confirmBooking = useBookingStore((state) => state.confirmBooking); // Zustand action
+  const confirmBooking = useBookingStore((state) => state.confirmBooking);
 
   const handleConfirmBooking = async () => {
-    // Validate input
-    // if (!bookingType || !deliveryOption) {
-    //   alert("Missing booking information. Please try again.");
-    //   return;
-    // }
-
-    // Call store's confirmBooking
     const success = await confirmBooking();
-
     if (success) {
-      setShowPopup(true); // Show success popup
+      setShowPopup(true);
     } else {
-      alert("Failed to confirm bookingggg. Please try again.");
+      alert("Failed to confirm booking. Please try again.");
     }
   };
+
   const placeholderText =
     (bookingType === "own" && deliveryOption === "Delivery")
-      ? "Enter Delivery Address"
-      : "Enter Location";
+      ? "Enter delivery address"
+      : "Enter pickup location";
 
   const handleNext = () => {
-    // Update bookingStore on button click
+    if (!pickupLocation.trim()) {
+      alert("Please enter a location");
+      return;
+    }
     updateBookingData({ location: pickupLocation });
-    console.log("Booking store state after update in userpickup.jsx:", useBookingStore.getState().bookingData);
-    handleConfirmBooking(); // Show the booking confirmation popup
+    handleConfirmBooking();
   };
 
   const handlePopupOk = () => {
-    setShowPopup(false); // Close the popup
-    navigate("/home/active"); // Redirect to the active bookings page
+    setShowPopup(false);
+    navigate("/home/active");
   };
 
   return (
     <div className="pickup_body">
-      <div className="pickup_logo-container">
-        <img src={Logo} className="pickup_logo-image" alt="Logo" />
-      </div>
       <div className="pickup_location">
-        <div className="pickup_location-1">
-          <img src={Map} alt="Map Logo" />
-          <input
-            type="text"
-            name="pickup"
-            placeholder={placeholderText}
-            className="pickup_input-field"
-            value={pickupLocation}
-            onChange={(e) => setPickupLocation(e.target.value)}
-          />
+        <div className="pickup-card">
+          <h2>Where should we meet you?</h2>
+          <p>
+            {deliveryOption === "Delivery"
+              ? "Enter the address where you'd like the car delivered."
+              : "Enter your preferred pickup location."}
+          </p>
+          <div className="pickup_location-1">
+            <img src={Map} alt="" />
+            <input
+              type="text"
+              name="pickup"
+              placeholder={placeholderText}
+              className="pickup_input-field"
+              value={pickupLocation}
+              onChange={(e) => setPickupLocation(e.target.value)}
+            />
+          </div>
+          <button onClick={handleNext} className="pickup_next-button" type="button">
+            Confirm booking
+          </button>
         </div>
-        <button onClick={handleNext} className="pickup_next-button">
-          Next
-        </button>
       </div>
 
-      {/* Popup */}
       {showPopup && (
         <div className="popup-overlay_p">
           <div className="popup-content_p">
-            <h3>Booking Confirmed</h3>
-            {/* confirmation page for withDrvier OR (own driving + Delivery) */}
-            <p className="ppr">Your booking has been successfully confirmed!</p>
-            <button onClick={handlePopupOk} className="popup-ok-button">
-              OK
+            <h3>Booking confirmed!</h3>
+            <p className="ppr">Your ride is booked. View details in My trips.</p>
+            <button onClick={handlePopupOk} className="popup-ok-button" type="button">
+              View my trips
             </button>
           </div>
         </div>

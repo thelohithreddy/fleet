@@ -8,15 +8,16 @@ const seedAdmin = async () => {
         await mongoose.connect(process.env.MONGO_URI);
 
         // Check if the admin already exists
-        const existingAdmin = await Administrator.findOne({ email: 'fleetiitk@gmail.com' });
+        const adminEmail = 'gaddampallylohithreddy7@gmail.com';
+        const existingAdmin = await Administrator.findOne({ email: adminEmail });
         if (existingAdmin) {
-            console.log('Admin already exists in the database.');
+            console.log(`Admin already exists: ${adminEmail}`);
             process.exit();
         }
 
         // Create a new admin
         const admin = new Administrator({
-            email: 'fleetiitk@gmail.com',
+            email: adminEmail,
             password: 'admin123456' // This will be hashed automatically by the pre-save hook
         });
 

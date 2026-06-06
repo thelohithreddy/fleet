@@ -17,12 +17,19 @@ const normalizeVehicle = (vehicle) => ({
   vehicleId: vehicle.vehicleId,
   city: vehicle.city,
   image: vehicle.image || "Images/default-car.png",
+  pricePerHour: vehicle.pricePerHour || 0,
+  hostAddress: vehicle.hostAddress || "",
+  isHost: Boolean(vehicle.isHost || vehicle.hostUserId),
+  description: vehicle.description || "",
+  transmission: vehicle.transmission || "",
+  modelYear: vehicle.modelYear || null,
 });
 
 const useUserVehicleStore = create((set, get) => ({
-  vehicles: [], // List of vehicles
-  error: null, // Error state
-  loading: false, // Loading state
+  vehicles: [],
+  searchMeta: null,
+  error: null,
+  loading: false,
 
   // Function to search vehicles based on search parameters
   searchVehicles: async (searchParams) => {
@@ -34,7 +41,12 @@ const useUserVehicleStore = create((set, get) => ({
 
       if (response.data.success) {
         const normalizedVehicles = response.data.vehicles.map(normalizeVehicle);
-        set({ vehicles: normalizedVehicles, loading: false, error: null });
+        set({
+          vehicles: normalizedVehicles,
+          searchMeta: response.data.meta || null,
+          loading: false,
+          error: null,
+        });
         return normalizedVehicles;
       } else {
         throw new Error(response.data.message || "Failed to fetch vehicles");
@@ -43,6 +55,7 @@ const useUserVehicleStore = create((set, get) => ({
       console.error("Error fetching vehicles:", error);
       set({
         vehicles: [],
+        searchMeta: null,
         loading: false,
         error: error.response?.data?.error || error.message || "An error occurred while fetching vehicles",
       });
@@ -104,6 +117,7 @@ const useUserVehicleStore = create((set, get) => ({
   resetVehicles: () => {
     set({
       vehicles: [],
+      searchMeta: null,
       loading: false,
       error: null,
     });

@@ -1,0 +1,232 @@
+@import "../styles/shared-pages.css";
+
+.host-page {
+  padding: 1.5rem 1.25rem 3rem;
+  background: var(--fleet-bg);
+}
+
+.host-page__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.host-hero {
+  margin-bottom: 1.5rem;
+}
+
+.host-hero h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  color: var(--fleet-text);
+}
+
+.host-hero p {
+  color: var(--fleet-text-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.host-form {
+  background: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: var(--fleet-radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--fleet-shadow);
+  margin-bottom: 2rem;
+}
+
+.host-form h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 1.25rem;
+}
+
+.host-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.host-field--full {
+  grid-column: 1 / -1;
+}
+
+.host-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fleet-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.host-field input,
+.host-field select {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--fleet-border);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: var(--fleet-font);
+}
+
+.host-field input:focus,
+.host-field select:focus,
+.host-field textarea:focus {
+  outline: none;
+  border-color: var(--fleet-primary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.host-field textarea {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--fleet-border);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: var(--fleet-font);
+  resize: vertical;
+}
+
+.host-field-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--fleet-text-muted);
+  margin-top: 0.35rem;
+}
+
+.host-pricing-note {
+  font-size: 0.875rem;
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  margin-top: 0.75rem;
+}
+
+.host-image-preview {
+  margin: 1rem 0;
+  border-radius: var(--fleet-radius);
+  overflow: hidden;
+  border: 1px solid var(--fleet-border);
+  max-height: 180px;
+}
+
+.host-image-preview img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.host-listings__note {
+  font-size: 0.85rem;
+  color: var(--fleet-text-muted);
+  margin: -0.5rem 0 1rem;
+}
+
+.host-listing-card__img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.host-submit {
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--fleet-primary), var(--fleet-primary-dark));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.host-submit:disabled {
+  opacity: 0.65;
+}
+
+.host-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.host-alert--error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.host-alert--success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.host-listings h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.host-listings__grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.host-listing-card {
+  background: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: var(--fleet-radius);
+  padding: 1rem 1.25rem;
+}
+
+.host-listing-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.host-listing-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--fleet-text-muted);
+}
+
+.host-listing-card__addr {
+  margin-top: 0.35rem !important;
+  font-size: 0.8rem !important;
+}
+
+.host-status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.host-back {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.host-back a {
+  color: var(--fleet-primary-dark);
+  font-weight: 600;
+}
+
+@media (max-width: 576px) {
+  .host-grid {
+    grid-template-columns: 1fr;
+  }
+}

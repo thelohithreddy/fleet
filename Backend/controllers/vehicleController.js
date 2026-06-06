@@ -14,18 +14,41 @@ const searchVehicles = async (req, res, next) => {
             filter 
         });
 
-        // Only filter by city for display
-        let query = {};
+        let meta = {
+            totalInCity: 0,
+            withDriverInCity: 0,
+            selfDriveInCity: 0,
+            city: city || null,
+            requestedWithDriver: withDriver === 'true' || withDriver === true,
+        };
+
+        if (city) {
+            const allInCity = await Vehicle.find({ city });
+            meta.totalInCity = allInCity.length;
+            meta.withDriverInCity = allInCity.filter(
+                (v) => v.driverName && v.driverName !== 'No Driver'
+            ).length;
+            meta.selfDriveInCity = allInCity.filter(
+                (v) => !v.driverName || v.driverName === 'No Driver'
+            ).length;
+        }
+
+        let query = {
+            $or: [
+                { listingStatus: { $in: ['fleet', 'approved'] } },
+                { listingStatus: { $exists: false } },
+            ],
+        };
         if (city) {
             query.city = city;
             console.log('Filtering vehicles by city:', city);
         }
 
-        if(withDriver === "true"){
+        if(withDriver === "true" || withDriver === true){
             query.driverName = { $nin: ["No Driver"] }; // Filter vehicles with driver
-        } else if(withDriver === "false"){
+        } else if(withDriver === "false" || withDriver === false){
             query.driverName = 'No Driver';
-         } // Filter vehicles without driver
+         }
 
         const pickupDateTime = new Date(pickupDate);
         const returnDateTime = new Date(returnDate);
@@ -62,15 +85,20 @@ const searchVehicles = async (req, res, next) => {
             image: vehicle.image,
             type: vehicle.type,
             price: vehicle.price,
+            pricePerHour: vehicle.pricePerHour || 0,
             availability: vehicle.availability,
             rating: vehicle.rating,
             driverName: vehicle.driverName,
-            // driverId: vehicle.driverId,
             fuelType: vehicle.fuelType,
             seatingCapacity: vehicle.seatingCapacity,
             registrationPlate: vehicle.registrationPlate,
             vehicleId: vehicle.vehicleId,
-            city: vehicle.city
+            city: vehicle.city,
+            hostAddress: vehicle.hostAddress || '',
+            isHost: Boolean(vehicle.hostUserId),
+            description: vehicle.description || '',
+            transmission: vehicle.transmission || '',
+            modelYear: vehicle.modelYear || null,
         }));
 
         // Log all available cities in the database
@@ -82,6 +110,7 @@ const searchVehicles = async (req, res, next) => {
             success: true,
             count: formattedVehicles.length,
             vehicles: formattedVehicles,
+            meta,
             searchCriteria: {
                 city,
                 pickupDate,

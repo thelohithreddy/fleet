@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/AuthStore"; // Import your user auth store
 import './Auth.css';
-import fleetLogo from '../../../public/greylogo.png'; // Import logo
+import fleetLogo from '../../../public/greylogo.png';
+import PasswordInput from '../../components/PasswordInput';
 
 export default function UserSignin() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function UserSignin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Email validation function
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -31,20 +33,24 @@ export default function UserSignin() {
     // }
 
     try {
-      setError(""); // Clear any local error
+      setError("");
+      setIsLoading(true);
       const response = await login(email, password);
-      
-      // Check if response contains a valid user and token
+
       if (response.success) {
-        console.log("Login successful:", response);
-        // Use push navigation (do NOT use replace) so that the sign in page remains in history.
-        navigate("/home/");
+        navigate("/home", { replace: true });
       } else {
         setError(response.message);
       }
     } catch (err) {
-      console.error("Login failed:", err);
-      setError(err.message || errorFromStore || "Login failed. Please try again.");
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        errorFromStore ||
+        "Login failed. Please try again.";
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,7 +64,14 @@ export default function UserSignin() {
     <div className="auth-container">
       <div className="auth-box">
         <div className="logo-section">
-          <img src={fleetLogo} alt="Fleet Logo" />
+          <img src={fleetLogo} alt="Fleet" />
+          <h1 className="brand">Drive anywhere.<br />Book in minutes.</h1>
+          <p className="tagline">Self-drive and chauffeur cars — transparent pricing, instant booking.</p>
+          <div className="auth-hero-badges">
+            <span>✓ Verified cars</span>
+            <span>✓ Flexible plans</span>
+            <span>✓ 24/7 support</span>
+          </div>
         </div>
 
         <div className="form-section">
@@ -89,19 +102,17 @@ export default function UserSignin() {
 
             <div className="mb-3">
               <label className="form-label">PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
+                id="password"
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    handleSubmit(e); // Trigger form submission on Enter
+                    handleSubmit(e);
                   }
                 }}
-                id="password"
                 autoComplete="current-password"
                 required
               />
@@ -110,8 +121,8 @@ export default function UserSignin() {
               </div>
             </div>
 
-            <button type="submit" className="btn">
-              Sign In
+            <button type="submit" className="btn" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 

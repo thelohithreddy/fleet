@@ -7,6 +7,7 @@ function BookingCard1({ booking }) {
   const { cancelBooking } = useUserBookingStore();
 
   const handleCancel = async () => {
+    if (!window.confirm("Cancel this booking?")) return;
     try {
       await cancelBooking(booking.bookingId);
       setShowPopup(true);
@@ -15,41 +16,44 @@ function BookingCard1({ booking }) {
     }
   };
 
-  const handlePopupClose = () => {
-    setShowPopup(false);
-  };
-
   return (
     <div className="booking-card_active">
+      <div className="booking-card_active__header">
+        <h3 className="booking-card_active__title">{booking.vehicleName}</h3>
+        <span className="fleet-badge fleet-badge--active">Active</span>
+      </div>
+
       <div className="details_active">
         <div className="left_active">
-          <h3>{booking.vehicleName}</h3>
-          <p>Start Date & Time: {booking.startDate}</p>
-          <p>End Date & Time: {booking.endDate}</p>
-          <p>Duration: {booking.duration} days</p>
-          <p>Driver Name: {booking.driverName}</p>
-          <p>Vehicle ID: {booking.vehicleId}</p>
-          {booking.address && <p>Address: {booking.address}</p>}
-          <p>Total Price: {booking.price}</p>
+          <p><strong>Pickup</strong> {booking.startDate}</p>
+          <p><strong>Return</strong> {booking.endDate}</p>
+          <p><strong>Duration</strong> {booking.duration} day{booking.duration !== 1 ? "s" : ""}</p>
+          {booking.driverName && <p><strong>Driver</strong> {booking.driverName}</p>}
+          {booking.address && <p><strong>Location</strong> {booking.address}</p>}
+          <p><strong>Total</strong> ₹{booking.price}</p>
         </div>
         <div className="right_active">
           <img src={booking.image} alt={booking.vehicleName} className="vehicle-image" />
         </div>
       </div>
+
       <div className="cancel_active">
-       
-        {showPopup && (
-          <div className="popup-overlay_c">
-            <div className="popup-content_c">
-              <h3>Ride Cancelled</h3>
-              <p>Your ride has been successfully cancelled.</p>
-              <button onClick={handlePopupClose} className="popup-close-btn">
-                OK
-              </button>
-            </div>
-          </div>
-        )}
+        <button onClick={handleCancel} className="cancel-btn" type="button">
+          Cancel booking
+        </button>
       </div>
+
+      {showPopup && (
+        <div className="popup-overlay_c">
+          <div className="popup-content_c">
+            <h3>Ride cancelled</h3>
+            <p>Your booking has been successfully cancelled.</p>
+            <button onClick={() => setShowPopup(false)} className="popup-close-btn" type="button">
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

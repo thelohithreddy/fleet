@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Auth.css";
-import fleetLogo from "../../../public/greylogo.png"; // Import logo
+import fleetLogo from "../../../public/greylogo.png";
 import OTPVerification from "./otpverification";
+import PasswordInput from "../../components/PasswordInput";
 import useAuthStore from "./../../../store/AuthStore.js";
 
 export default function Signup() {
@@ -13,6 +14,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [showOtp, setShowOtp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -31,25 +33,32 @@ export default function Signup() {
       setError("Passwords do not match!");
       return;
     }
-    setShowOtp(true);
+    if (isSubmitting) return;
+
     try {
+      setIsSubmitting(true);
       setSignupData(email, password, confirmPassword);
       const res = await sendOtp();
       if (!res.success) {
         setError(res.message || "Failed to send OTP");
-        setShowOtp(false);
       } else {
         setError("");
+        setShowOtp(true);
       }
     } catch (error) {
       console.error("Error sending email:", error);
-      setError(error.message || "Failed to send OTP. Please try again.");
-      setShowOtp(false); // Revert if an error occurs
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to send OTP. Please try again."
+      );
+      setShowOtp(false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (showOtp) {
-    console.log("Navigating to OTP verification page...");
     return <OTPVerification />;
   }
 
@@ -58,7 +67,9 @@ export default function Signup() {
     <div className="auth-container">
       <div className="auth-box">
         <div className="logo-section">
-          <img src={fleetLogo} alt="Fleet Logo" />
+          <img src={fleetLogo} alt="Fleet" />
+          <h1 className="brand">Join Fleet</h1>
+          <p className="tagline">Create your account and book your first ride in under 2 minutes.</p>
         </div>
 
         <div className="form-section">
@@ -74,6 +85,7 @@ export default function Signup() {
                 className="form-control"
                 placeholder="Enter email"
                 value={email}
+                disabled={isSubmitting}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -88,11 +100,11 @@ export default function Signup() {
 
             <div className="mb-3">
               <label className="form-label">PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
+                id="password"
                 placeholder="Enter password"
                 value={password}
+                disabled={isSubmitting}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -100,29 +112,31 @@ export default function Signup() {
                     document.getElementById("confirmPassword").focus();
                   }
                 }}
-                id="password"
+                minLength={6}
               />
             </div>
 
             <div className="mb-3">
               <label className="form-label">CONFIRM PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
+                id="confirmPassword"
                 placeholder="Confirm password"
                 value={confirmPassword}
+                disabled={isSubmitting}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    handleSubmit(e); // Trigger form submission
+                    handleSubmit(e);
                   }
                 }}
-                id="confirmPassword"
+                minLength={6}
               />
             </div>
 
-            <button type="submit" className="btn">Send OTP</button>
+            <button type="submit" className="btn" disabled={isSubmitting}>
+              {isSubmitting ? "Sending OTP..." : "Send OTP"}
+            </button>
           </form>
 
           <div className="auth-links">

@@ -1,6 +1,12 @@
 // Function to generate a 6-digit OTP
 const nodemailer = require("nodemailer");
-require('dotenv').config()
+require('dotenv').config();
+
+const getEmailCredentials = () => {
+    const user = process.env.EMAIL_USER || process.env.gmail;
+    const pass = process.env.EMAIL_PASS || process.env.app_pass;
+    return { user, pass };
+};
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a random 6-digit number
@@ -13,17 +19,22 @@ async function sendOTP(email, otp) {
             throw new Error('Email and OTP are required');
         }
 
-        // Environment variables validation
-        const gmailUser = process.env.gmail;
-        const gmailPass = process.env.app_pass;
+        const { user: gmailUser, pass: gmailPass } = getEmailCredentials();
 
         if (!gmailUser || !gmailPass) {
-            console.error('Missing email configuration:', { gmailUser: !!gmailUser, gmailPass: !!gmailPass });
-            throw new Error('Email configuration is missing. Please check environment variables.');
+            console.error('Missing email configuration:', {
+                EMAIL_USER: !!process.env.EMAIL_USER,
+                gmail: !!process.env.gmail,
+                EMAIL_PASS: !!process.env.EMAIL_PASS,
+                app_pass: !!process.env.app_pass,
+            });
+            throw new Error(
+                'Email configuration is missing. Set EMAIL_USER and EMAIL_PASS in Backend/.env and restart the server.'
+            );
         }
 
         // Create a transporter
-        let transporter = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
                 user: gmailUser.trim(),
@@ -40,7 +51,7 @@ async function sendOTP(email, otp) {
         }
 
         // Email content
-        let mailOptions = {
+        const mailOptions = {
             from: `"Fleet" <${gmailUser.trim()}>`,
             to: email,
             subject: "Your Fleet Verification Code",
@@ -63,18 +74,17 @@ async function sendOTP(email, otp) {
         return true;
     } catch (error) {
         console.error("Error in sendOTP:", error);
-        
+
         if (error.code === 'EAUTH') {
             throw new Error('Invalid email credentials. Please check email configuration.');
         }
-        
-        // Throw the original error message if it's our custom error
+
         if (error.message.includes('configuration')) {
             throw error;
         }
-        
+
         throw new Error('Failed to send verification code. Please try again later.');
     }
 }
 
-module.exports = { generateOTP, sendOTP };
+module.exports = { generateOTP, sendOTP, getEmailCredentials };

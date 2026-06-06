@@ -1,109 +1,147 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Auth.css";
-import fleetLogo from "../../../public/greylogo.png"; // Import logo
+import fleetLogo from "../../../public/greylogo.png";
 import useAuthStore from "../../../store/AuthStore.js";
+import { OTP_RESEND_COOLDOWN_SEC } from "../../config/app.js";
 
 export default function OTPVerification() {
   const navigate = useNavigate();
-  const { email, sendOtp, verifyOtp } = useAuthStore();
+  const { email, resendOtp, verifyOtp } = useAuthStore();
+  const verifyLockRef = useRef(false);
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [timer, setTimer] = useState(45);
+  const [timer, setTimer] = useState(OTP_RESEND_COOLDOWN_SEC);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("error");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
-  // useEffect(() => {
-  //   sendOtp(); // Send OTP on mount
-  // }, []);
+  const inputsLocked = isVerifying || isVerified || isResending;
 
-  // Timer Countdown
   useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    } else {
+    if (timer <= 0) {
       setResendEnabled(true);
+      return;
     }
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
   }, [timer]);
 
-  // Handle OTP Input Change
+  const showMessage = (text, type = "error") => {
+    setMessage(text);
+    setMessageType(type);
+  };
+
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
+    if (inputsLocked || !/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
     if (value && index < otp.length - 1) {
-      document.getElementById(`otp-${index + 1}`).focus();
+      document.getElementById(`otp-${index + 1}`)?.focus();
     } else if (!value && index > 0) {
-      document.getElementById(`otp-${index - 1}`).focus();
+      document.getElementById(`otp-${index - 1}`)?.focus();
     }
   };
 
-  // Handle Backspace Key
   const handleKeyDown = (index, e) => {
+    if (inputsLocked) return;
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const newOtp = [...otp];
       newOtp[index - 1] = "";
       setOtp(newOtp);
-      document.getElementById(`otp-${index - 1}`).focus();
+      document.getElementById(`otp-${index - 1}`)?.focus();
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleVerifyOtp();
     }
   };
 
-  // Verify OTP Function
   const handleVerifyOtp = async () => {
+    if (verifyLockRef.current || isVerifying || isVerified) return;
+
+    const enteredOtp = otp.join("");
+    if (!enteredOtp || enteredOtp.length !== 6) {
+      showMessage("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    verifyLockRef.current = true;
+    setIsVerifying(true);
+    showMessage("");
+
     try {
-      const enteredOtp = otp.join("");
-      if (!enteredOtp || enteredOtp.length !== 6) {
-        setMessage("Please enter a valid 6-digit OTP");
-        return;
-      }
       const res = await verifyOtp(enteredOtp);
       if (res.success) {
-        setMessage("OTP Verified Successfully!");
-        setTimeout(() => navigate("/auth/signin"), 1000);
+        setIsVerified(true);
+        showMessage("Email verified! Redirecting to sign in...", "success");
+        setTimeout(() => navigate("/auth/signin", { replace: true }), 1200);
       } else {
-        setMessage(res.message || "OTP verification failed");
+        showMessage(res.message || "OTP verification failed");
+        verifyLockRef.current = false;
       }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
-      setMessage(error.message || "Invalid OTP. Please try again.");
+      showMessage(error.message || "Invalid OTP. Please try again.");
+      verifyLockRef.current = false;
+    } finally {
+      setIsVerifying(false);
     }
   };
 
-  // Resend OTP Function
   const handleResendOtp = async () => {
+    if (isResending || isVerified || !resendEnabled) return;
+
+    setIsResending(true);
+    showMessage("");
+
     try {
-      await sendOtp();
-      setTimer(45);
+      await resendOtp();
+      setOtp(["", "", "", "", "", ""]);
+      setTimer(OTP_RESEND_COOLDOWN_SEC);
       setResendEnabled(false);
+      verifyLockRef.current = false;
+      showMessage("New OTP sent. Use the code from your latest email.", "success");
+      document.getElementById("otp-0")?.focus();
     } catch (error) {
-      console.error(error);
-      setMessage("Failed to resend OTP. Please try again.");
+      showMessage(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to resend OTP. Please try again."
+      );
+    } finally {
+      setIsResending(false);
     }
   };
+
   return (
     <div className="auth-container">
       <div className="auth-box">
         <div className="logo-section">
-          <img src={fleetLogo} alt="Fleet Logo" />
+          <img src={fleetLogo} alt="Fleet" />
+          <h1 className="brand">Verify your email</h1>
+          <p className="tagline">We sent a 6-digit code to your inbox. Enter it below to continue.</p>
         </div>
 
         <div className="form-section">
           <h2 className="auth-title">Verify Your Email</h2>
           <p className="text-center mb-4">
-            Enter the 6-digit code sent to<br />
+            Enter the 6-digit code sent to
+            <br />
             <strong>{email}</strong>
           </p>
 
           {message && (
             <div
               className={`alert ${
-                message.includes("Successfully") ? "alert-success" : "alert-danger"
+                messageType === "success" ? "alert-success" : "alert-danger"
               }`}
             >
               {message}
@@ -120,23 +158,41 @@ export default function OTPVerification() {
                 maxLength="1"
                 className="otp-input"
                 value={digit}
+                disabled={inputsLocked}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                autoComplete="off"
+                autoComplete="one-time-code"
               />
             ))}
           </div>
 
-          <button className="otp-verify-btn" onClick={handleVerifyOtp}>
-            Verify OTP
+          <button
+            type="button"
+            className="otp-verify-btn"
+            onClick={handleVerifyOtp}
+            disabled={inputsLocked}
+            aria-busy={isVerifying}
+          >
+            {isVerified
+              ? "Verified"
+              : isVerifying
+                ? "Verifying..."
+                : "Verify OTP"}
           </button>
 
           <div className="auth-links">
             {!resendEnabled ? (
-              <p className="timer-text">Resend OTP in {timer} seconds</p>
+              <p className="timer-text">
+                Resend OTP in {timer} second{timer !== 1 ? "s" : ""}
+              </p>
             ) : (
-              <button className="resend-otp-btn" onClick={handleResendOtp}>
-                Resend OTP
+              <button
+                type="button"
+                className="resend-otp-btn"
+                onClick={handleResendOtp}
+                disabled={isResending || isVerified}
+              >
+                {isResending ? "Sending..." : "Resend OTP"}
               </button>
             )}
           </div>

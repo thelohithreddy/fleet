@@ -1,16 +1,38 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { jwtDecode } from "jwt-decode";
 import api from "../src/config/api.js";
 
-// Axios interceptor to handle token expiration
+const AUTH_URLS = /\/auth\/(login|send-otp|verify-otp|resend-otp|forgot-password|reset-password|admin\/auth\/login)/;
+
+// Log out only on 401 for protected API calls — not failed login attempts
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      const { userlogout } = useAuthStore.getState();
+      const requestUrl = error.config?.url || "";
+      if (AUTH_URLS.test(requestUrl)) {
+        return Promise.reject(error);
+      }
 
-      // Log out the user if token is invalid or expired
-      userlogout();
+      const token = localStorage.getItem("token");
+      if (!token) {
+        return Promise.reject(error);
+      }
+
+      let isAdminSession = false;
+      try {
+        isAdminSession = jwtDecode(token).isAdmin === true;
+      } catch {
+        isAdminSession = false;
+      }
+
+      if (isAdminSession) {
+        const { default: useAdminAuthStore } = await import("./AdminAuthStore.js");
+        useAdminAuthStore.getState().adminlogout();
+      } else {
+        useAuthStore.getState().userlogout(false);
+      }
     }
     return Promise.reject(error);
   }
@@ -48,10 +70,14 @@ const useAuthStore = create(
         if (password !== confirmPassword) {
           throw new Error('Passwords do not match');
         }
-        set({ email, password, confirmPassword });
+        set({
+          email: email.trim().toLowerCase(),
+          password,
+          confirmPassword,
+        });
       },
 
-      // Send OTP
+      // Send OTP (signup)
       sendOtp: async () => {
         const { email, password, confirmPassword } = get();
 
@@ -68,6 +94,19 @@ const useAuthStore = create(
         }
       },
 
+      // Resend OTP (signup verification — does not re-run signup)
+      resendOtp: async () => {
+        const { email } = get();
+        if (!email) throw new Error('Email is required');
+
+        const response = await api.post("/auth/resend-otp", { email });
+        if (response.data.message) {
+          set({ isOtpSent: true });
+          return response.data;
+        }
+        throw new Error(response.data.message || 'Failed to resend OTP');
+      },
+
       // Verify OTP
       verifyOtp: async (otp) => {
         try {
@@ -76,7 +115,11 @@ const useAuthStore = create(
       
           if (!email || !password) throw new Error('Session expired. Please try signing up again.');
       
-          const response = await api.post("/auth/verify-otp", { email, otp, password });
+          const response = await api.post("/auth/verify-otp", {
+            email: email.trim().toLowerCase(),
+            otp: String(otp).trim(),
+            password,
+          });
       
           if (!response.data.success) {
             return response.data;
@@ -98,22 +141,30 @@ const useAuthStore = create(
             throw new Error("OTP verification failed - no token received");
           }
         } catch (error) {
+          const message =
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            error.message ||
+            "OTP verification failed. Please try again.";
+
           set({
             user: null,
             token: null,
             isVerified: false,
-            error: error.message || "OTP verification failed. Please try again.",
+            error: message,
           });
-      
-          // Removed the invalid setAuthState call here
-          throw error; // Re-throw the error to handle it in the calling function
+
+          throw new Error(message);
         }
       },
 
       // Login
       login: async (email, password) => {
         try {
-          const response = await api.post("/auth/login", { email, password });
+          const response = await api.post("/auth/login", {
+            email: email.trim().toLowerCase(),
+            password,
+          });
           const setAuthState = get().setAuthState; // Access setAuthState using get()
 
           if (!response.data.success) {
@@ -121,15 +172,12 @@ const useAuthStore = create(
           }
 
           if (response.data.token) {
-            localStorage.setItem('token', response.data.token);
-            api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-
+            setAuthState(response.data.token, false);
             set({
               user: response.data.user,
               error: null,
+              isVerified: true,
             });
-
-            setAuthState(response.data.token, false); // Set token and isAdmin in Zustand store
             return response.data;
           } else {
             throw new Error("Login failed - no token received");
@@ -144,39 +192,53 @@ const useAuthStore = create(
         }
       },
 
-      // Logout
-      userlogout: () => {
+      // Logout (hardRedirect=false avoids full-page flash when already on sign-in)
+      userlogout: (hardRedirect = true) => {
         localStorage.removeItem('token');
         delete api.defaults.headers.common['Authorization'];
         set({
           user: null,
           token: null,
+          isAdmin: false,
           isOtpSent: false,
           isVerified: false,
           error: null,
         });
-        window.location.href = "/auth/signin"; // Redirect to login page
+        if (hardRedirect && !window.location.pathname.startsWith("/auth/")) {
+          window.location.href = "/auth/signin";
+        }
       },
 
       // Forgot Password
       forgotPassword: async (email) => {
-        const response = await api.post("/auth/forgot-password", { email });
-        if (response.data.message) {
-          set({ email });
+        const normalizedEmail = email.trim().toLowerCase();
+        const response = await api.post("/auth/forgot-password", {
+          email: normalizedEmail,
+        });
+        if (response.data.success !== false && response.data.message) {
+          set({ email: normalizedEmail });
           return response.data;
-        } else {
-          throw new Error("Failed to send password reset OTP");
         }
+        throw new Error(
+          response.data.message || "Failed to send password reset OTP"
+        );
       },
 
       // Reset Password
       resetPassword: async (email, otp, newPassword) => {
-        const response = await api.post("/auth/reset-password", { email, otp, newPassword });
+        const response = await api.post("/auth/reset-password", {
+          email: email.trim().toLowerCase(),
+          otp: otp.toString().trim(),
+          newPassword,
+        });
         if (response.data.success) {
           return response.data;
-        } else {
-          throw new Error(response.data.error || "Failed to reset password");
         }
+        throw new Error(
+          response.data.message ||
+            response.data.error ||
+            "Failed to reset password"
+        );
       },
     }),
     {
@@ -185,7 +247,11 @@ const useAuthStore = create(
       partialize: (state) => ({
         token: state.token,
         user: state.user,
+        isAdmin: state.isAdmin,
         isVerified: state.isVerified,
+        email: state.email,
+        password: state.password,
+        confirmPassword: state.confirmPassword,
       }),
     }
   )

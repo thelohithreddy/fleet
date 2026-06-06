@@ -1,7 +1,7 @@
 const Booking = require('../models/Booking');
 const mongoose = require('mongoose');  // Import mongoose to use ObjectId
 const Vehicle = require('../models/Vehicle');
-const { calculateTotalPayment } = require('../utils/calculatePayment');
+const { calculateBookingTotal } = require('../utils/pricing');
 const { markVehicleUnavailable } = require('./vehicleController');
 const schedule = require('node-schedule');
 
@@ -29,10 +29,14 @@ const confirmBooking = async (req, res) => {
     // 3: Set vehicle availability to 'Not available'
 //   await Vehicle.findByIdAndUpdate(bookingData.vehicleId, { availability: 'Not available' });
 
-    // 4: Calculate total price (in days)
-    const msPerDay = 1000 * 60 * 60 * 24;
-    duration = Math.ceil((returnDate - pickupDate) / msPerDay);
-    const totalAmount = duration * parseFloat(bookingData.price);
+    const vehicle = await Vehicle.findById(bookingData.vehicleId);
+    const pricing = calculateBookingTotal(
+        vehicle || { price: bookingData.price, pricePerHour: bookingData.pricePerHour },
+        pickupDate,
+        returnDate
+    );
+    const duration = pricing.duration;
+    const totalAmount = pricing.totalAmount;
 
     //   console.log('Processed Booking:', {
     //         ...bookingData,
@@ -48,8 +52,10 @@ const confirmBooking = async (req, res) => {
   vehicle: mongoose.Types.ObjectId.createFromHexString(bookingData.vehicleId),
         pickupDate: pickupDate,
         returnDate: returnDate,
-        duration: bookingData.duration,
+        duration: duration,
         totalAmount: totalAmount,
+        tripHours: pricing.tripHours,
+        pricingMode: pricing.pricingMode,
         city: bookingData.city,
         // rating: bookingData.rating ? parseInt(bookingData.rating) : null,
         address: bookingData.location,

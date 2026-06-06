@@ -1,33 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import "./userpayment.css";
-import logo from "./fulllogo.jpg";
 import upi from "./upi.jpg";
 import cashondelivery from "./cashondelivery.jpg";
-import { NavLink } from 'react-router-dom';
 
 function Userpayment() {
-    return (
-        <div className="payment_body">
-          {/* Left side for logo */}
-          <div className="payment_logo-container">
-            <img src={logo} alt="Logo" className="payment_logo-image" />
-          </div>
-    
-          {/* Right side for payment options */}
-          <div className="payment-options">
-            <h2>Payment Options</h2>
-            <div className="payment-option">
-              <span>UPI</span>
-              <img src={upi} alt="UPI"/>
-            </div>
-            <div className="payment-option">
-              <span>Cash on Delivery</span>
-              <img src={cashondelivery} alt="Cash on Delivery"/>
-            </div>
-            <button className="payment_next-button">Next</button>
-          </div>
+  const [selected, setSelected] = useState(null);
+
+  return (
+    <div className="payment_body">
+      <div className="payment-options">
+        <h2>Payment</h2>
+        <p className="payment-subtitle">Select how you'd like to pay</p>
+
+        <div
+          className="payment-option"
+          onClick={() => setSelected("upi")}
+          style={selected === "upi" ? { borderColor: "var(--fleet-primary)", background: "var(--fleet-primary-light)" } : {}}
+          role="button"
+          tabIndex={0}
+        >
+          <span>UPI</span>
+          <img src={upi} alt="UPI" />
         </div>
-      );
-  }
+
+        <div
+          className="payment-option"
+          onClick={() => setSelected("cod")}
+          style={selected === "cod" ? { borderColor: "var(--fleet-primary)", background: "var(--fleet-primary-light)" } : {}}
+          role="button"
+          tabIndex={0}
+        >
+          <span>Cash on delivery</span>
+          <img src={cashondelivery} alt="Cash on delivery" />
+        </div>
+
+        <button className="payment_next-button" type="button" disabled={!selected}>
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default Userpayment;

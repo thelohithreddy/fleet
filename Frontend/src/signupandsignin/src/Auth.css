@@ -1,8 +1,12 @@
 .auth-container {
     min-height: 100vh;
-    background: linear-gradient(180deg, #0a1825, #142134, #1e3c72);
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(15, 118, 110, 0.8)),
+        url("https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1600&q=80")
+        center / cover no-repeat;
     display: flex;
     padding: 20px;
+    font-family: var(--fleet-font, Inter, system-ui, sans-serif);
 }
 
 .auth-box {
@@ -20,48 +24,64 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
-    padding-right: 60px;
+    justify-content: center;
+    gap: 1rem;
+    padding-right: 3rem;
+    color: #fff;
 }
 
 .logo-section img {
-    width: 450px;
+    width: 140px;
     height: auto;
-    margin-bottom: 8px;
-    margin-left: 120px;
-    margin-right: 70px;
+    margin: 0;
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
 }
 
 .logo-section .brand {
-    font-size: 100px;
-    font-weight: bold;
-    color:black;
-    line-height: 1;
-    margin-left: 150px;
-    margin-top: -30px;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.03em;
 }
 
 .logo-section .tagline {
-    font-size: 12px;
-    color: black;
-    margin-top: 8px;
-    margin-left: 140px;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    max-width: 380px;
+    line-height: 1.55;
+}
+
+.logo-section .auth-hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .form-section {
     flex: 1;
-    max-width: 400px;
+    max-width: 420px;
     background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem 2rem 1.75rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .auth-title {
-    font-size: 32px;
-    color: black;
-    margin-bottom: 24px;
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1.25rem;
     text-align: center;
+    letter-spacing: -0.02em;
 }
 
 .auth-links {
@@ -99,25 +119,32 @@
 
 .auth-form .form-control:focus {
     outline: none;
-    border-color: black;
-    box-shadow: 0 0 0 2px rgba(39, 25, 68, 0.1);
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
 }
 
 .auth-form .btn {
     width: 100%;
-    padding: 12px;
-    background: black;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
 }
 
-.auth-form .btn:hover {
-    background: #6d6d6d;
+.auth-form .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(13, 148, 136, 0.35);
+}
+
+.auth-form .btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 .alert-danger {
@@ -218,7 +245,7 @@
 .otp-verify-btn {
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white;
     border: none;
     border-radius: 8px;
@@ -241,10 +268,23 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.otp-verify-btn:disabled,
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.otp-input:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
 .resend-otp-btn {
     background: transparent;
-    color: #1e3c72;
-    border: 2px solid #1e3c72;
+    color: #0f766e;
+    border: 2px solid #0d9488;
     padding: 10px 20px;
     border-radius: 6px;
     font-weight: 600;
@@ -252,8 +292,8 @@
     transition: all 0.3s ease;
 }
 
-.resend-otp-btn:hover {
-    background: #1e3c72;
+.resend-otp-btn:hover:not(:disabled) {
+    background: #0d9488;
     color: white;
     transform: translateY(-2px);
 }

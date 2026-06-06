@@ -14,6 +14,23 @@ const vehicleSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    pricePerHour: {
+        type: Number,
+        default: 0
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    modelYear: {
+        type: Number,
+        default: null
+    },
+    transmission: {
+        type: String,
+        enum: ['Manual', 'Automatic', ''],
+        default: 'Manual'
+    },
     availability: {
         type: String,
         enum: ['Available', 'Not available'],
@@ -60,7 +77,20 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    
+    hostUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    hostAddress: {
+        type: String,
+        default: ''
+    },
+    listingStatus: {
+        type: String,
+        enum: ['fleet', 'pending', 'approved'],
+        default: 'fleet'
+    },
     bookings: [
             {
                 type: mongoose.Schema.Types.ObjectId,

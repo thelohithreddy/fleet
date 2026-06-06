@@ -122,7 +122,38 @@ const useUserStore = create((set) => ({
     }
   },
 
-  // Reset error state
+  changePassword: async (currentPassword, newPassword) => {
+    try {
+      set({ loading: true, error: null });
+      const response = await api.put('/users/change-password', {
+        currentPassword,
+        newPassword,
+      });
+      set({ loading: false });
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.error || error.message || 'Failed to change password';
+      set({ error: msg, loading: false });
+      throw error;
+    }
+  },
+
+  listHostVehicle: async (vehicleData) => {
+    const response = await api.post('/users/host-vehicle', vehicleData);
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Failed to list vehicle');
+    }
+    return response.data;
+  },
+
+  getMyHostedVehicles: async () => {
+    const response = await api.get('/users/my-vehicles');
+    if (response.data.success) {
+      return response.data.vehicles || [];
+    }
+    return [];
+  },
+
   clearError: () => set({ error: null }),
 
   // Reset user state

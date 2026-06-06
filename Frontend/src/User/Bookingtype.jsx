@@ -8,49 +8,55 @@ const Bookingtype = () => {
   const bookingType = location.state?.bookingType || 'driver';
   const [deliveryOption, setDeliveryOption] = useState('');
 
-  const handleDelivery = () => {
-    setDeliveryOption('Delivery');
-  };
-
-  const handlePickup = () => {
-    setDeliveryOption('Pickup');
-  };
-
   const handleConfirm = () => {
+    if (!deliveryOption) return;
     navigate('/home/tandc', { state: { bookingType, deliveryOption } });
   };
 
   return (
     <div className="bookingtype_body">
-    <div className="bookingtype-container">
-      <h2 className="bookingtype">Booking Type</h2>
-      
-      <div className="bookingtype_button-group">
-        <button onClick={handleDelivery} className="button_bookingtype">
-          Delivery
-        </button>
-        <button onClick={handlePickup} className="button_bookingtype">
-          Pickup
+      <div className="bookingtype-container">
+        <h2 className="bookingtype">How do you want the car?</h2>
+        <p className="bookingtype-subtitle">Choose delivery to your doorstep or pickup from our hub</p>
+
+        <div className="bookingtype_button-group">
+          <button
+            type="button"
+            onClick={() => setDeliveryOption('Delivery')}
+            className={`button_bookingtype${deliveryOption === 'Delivery' ? ' selected' : ''}`}
+          >
+            🚚 Delivery
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeliveryOption('Pickup')}
+            className={`button_bookingtype${deliveryOption === 'Pickup' ? ' selected' : ''}`}
+          >
+            📍 Pickup
+          </button>
+        </div>
+
+        {deliveryOption === 'Delivery' && (
+          <div className="bookingtype-info">
+            <p>The vehicle will be delivered to the address you provide in the next step.</p>
+          </div>
+        )}
+
+        {deliveryOption === 'Pickup' && (
+          <div className="bookingtype-info">
+            <p>Visit our nearest hub to collect your vehicle at the scheduled time.</p>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={handleConfirm}
+          className="bookingtype_confirm-button"
+          disabled={!deliveryOption}
+        >
+          Continue
         </button>
       </div>
-      
-      {deliveryOption === 'Delivery' && (
-              <div >
-                {/* Add any additional UI elements for "With Driver" option here */}
-                <p>"You have selected Delivery. The vehicle will be dropped off at the address you will provide"</p>
-              </div>
-            )}
-
-            {deliveryOption === 'Pickup' && (
-              <div >
-                {/* Add any additional UI elements for "Own Driving" option here */}
-                <p >"You have selected Pickup. Please visit our store to collect your vehicle."</p>
-              </div>
-            )}
-      <button onClick={handleConfirm} className="bookingtype_confirm-button">
-        Confirm
-      </button>
-    </div>
     </div>
   );
 };

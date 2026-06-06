@@ -4,6 +4,7 @@ import "./Auth.css";
 import fleetLogo from "../../../public/greylogo.png"; // Import logo
 import OTPVerification from "./otpverification";
 import useAuthStore from "./../../../store/AuthStore.js";
+import PasswordInput from "../../components/PasswordInput";
 
 export default function Forgot_Admin() {
   const navigate = useNavigate();
@@ -63,7 +64,9 @@ export default function Forgot_Admin() {
       <div className="auth-container">
         <div className="auth-box">
           <div className="logo-section">
-            <img src={fleetLogo} alt="Fleet Logo" />
+            <img src={fleetLogo} alt="Fleet" />
+            <h1 className="brand">Reset password</h1>
+            <p className="tagline">Enter the code we sent and choose a new password.</p>
           </div>
 
           <div className="form-section">
@@ -97,7 +100,9 @@ export default function Forgot_Admin() {
     <div className="auth-container">
       <div className="auth-box">
         <div className="logo-section">
-          <img src={fleetLogo} alt="Fleet Logo" />
+          <img src={fleetLogo} alt="Fleet" />
+          <h1 className="brand">Forgot password?</h1>
+          <p className="tagline">We'll send a verification code to your admin email.</p>
         </div>
 
         <div className="form-section">
@@ -119,23 +124,23 @@ export default function Forgot_Admin() {
 
             <div className="mb-3">
               <label className="form-label">NEW PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
                 placeholder="Enter new password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                autoComplete="new-password"
               />
             </div>
 
             <div className="mb-3">
               <label className="form-label">CONFIRM NEW PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
                 placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                minLength={6}
+                autoComplete="new-password"
               />
             </div>
 

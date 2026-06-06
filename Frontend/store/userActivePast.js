@@ -90,7 +90,7 @@ const useUserBookingStore = create((set, get) => ({
   cancelBooking: async (bookingId) => {
     set({ loading: true, error: null });
     try {
-      const response = await api.delete(`/bookings/cancel/${bookingId}`);
+      const response = await api.put(`/bookings/cancel/${bookingId}`);
       if (response.data.success) {
         set((state) => ({
           activeBookings: state.activeBookings.filter(

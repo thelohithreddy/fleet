@@ -26,24 +26,39 @@ import  useAdminAuthStore  from '../store/AdminAuthStore.js';
 import { Outlet } from 'react-router-dom';
 import Forgot_User from './signupandsignin/src/forgot_user.jsx';
 import Forgot_Admin from './signupandsignin/src/forgot_admin.jsx';
+import Footer from './components/Footer.jsx';
+import HostVehicle from './User/HostVehicle.jsx';
 
 import {jwtDecode} from 'jwt-decode';
+import { useEffect, useState } from 'react';
 
 const ProtectedRoute = ({ children, isAdmin }) => {
-  const { token } = useAuthStore();
+  const token = useAuthStore((state) => state.token);
+  const [authReady, setAuthReady] = useState(
+    () => useAuthStore.persist.hasHydrated()
+  );
 
-  // Check if the user is authenticated
+  useEffect(() => {
+    if (useAuthStore.persist.hasHydrated()) {
+      setAuthReady(true);
+      return;
+    }
+    return useAuthStore.persist.onFinishHydration(() => setAuthReady(true));
+  }, []);
+
+  if (!authReady) {
+    return null;
+  }
+
   if (!token) {
-    // Redirect to the appropriate login page if not authenticated
     return <Navigate to={isAdmin ? "/auth/adminsignin" : "/auth/signin"} replace />;
   }
 
   try {
     // Decode the token to extract user role
     const decodedToken = jwtDecode(token);
-    const tokenIsAdmin = decodedToken.isAdmin; // Assuming the token contains an "isAdmin" field
+    const tokenIsAdmin = decodedToken.isAdmin === true;
 
-    // Check if the user is authorized to access the route
     if (isAdmin !== tokenIsAdmin) {
       // Redirect to the unauthorized page if roles don't match
       return <Navigate to="/unauthorized" replace />;
@@ -60,10 +75,13 @@ const ProtectedRoute = ({ children, isAdmin }) => {
 // User Layout Component
 const UserLayout = () => {
   return (
-    <>
+    <div className="user-layout">
       <NavBar isAdmin={false} />
-      <div><Outlet /></div>
-    </>
+      <main className="user-layout__main">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
@@ -125,6 +143,7 @@ function App() {
           <Route path="userpayment" element={<Userpayment />} />
           <Route path="vehicles" element={<Usercarspage />} />
           <Route path="bookingtype" element={<Bookingtype />} />
+          <Route path="host" element={<HostVehicle />} />
         </Route>
 
         {/* Unauthorized Page */}

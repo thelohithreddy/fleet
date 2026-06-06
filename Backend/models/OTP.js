@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const otpSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true
+        required: true,
+        lowercase: true,
+        trim: true,
     },
     otp: {
         type: String,
@@ -15,6 +17,8 @@ const otpSchema = new mongoose.Schema({
         expires: 600 // Document will be automatically deleted after 10 minutes (600 seconds)
     }
 });
+
+otpSchema.index({ email: 1 }, { unique: true });
 
 module.exports = mongoose.model('OTP', otpSchema);
 

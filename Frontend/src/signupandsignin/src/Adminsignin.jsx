@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import './Auth.css';
 import fleetLogo from '../../../public/greylogo.png';
+import PasswordInput from '../../components/PasswordInput';
 import useAdminAuthStore from "../../../store/AdminAuthStore";
 
 export default function Adminsignin() {
@@ -66,7 +67,9 @@ export default function Adminsignin() {
     <div className="auth-container">
       <div className="auth-box">
         <div className="logo-section">
-          <img src={fleetLogo} alt="Fleet Logo" />
+          <img src={fleetLogo} alt="Fleet" />
+          <h1 className="brand">Admin portal</h1>
+          <p className="tagline">Manage vehicles, drivers, and bookings from one dashboard.</p>
         </div>
 
         <div className="form-section">
@@ -88,13 +91,13 @@ export default function Adminsignin() {
 
             <div className="mb-3">
               <label className="form-label">PASSWORD</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password" // Optional: for better UX
+                autoComplete="current-password"
+                required
+                minLength={6}
               />
             </div>
 

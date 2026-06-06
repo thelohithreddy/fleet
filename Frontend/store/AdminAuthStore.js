@@ -3,20 +3,6 @@ import { persist } from "zustand/middleware";
 import api from "../src/config/api.js";
 import useAuthStore from "./AuthStore"; // Import AuthStore
 
-// Axios interceptor to handle token expiration
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      const { adminlogout } = useAdminAuthStore.getState();
-
-      // Log out the user if token is invalid or expired
-      adminlogout();
-    }
-    return Promise.reject(error);
-  }
-);
-
 const useAdminAuthStore = create(
   persist(
     (set, get) => ({

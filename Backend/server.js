@@ -62,14 +62,19 @@ const startServer = async () => {
         console.log('Indexes recreated successfully');
 
         // Start the server
+        const emailConfigured =
+            !!(process.env.EMAIL_USER || process.env.gmail) &&
+            !!(process.env.EMAIL_PASS || process.env.app_pass);
+
         const server = app.listen(port, '0.0.0.0', () => {
             console.log(`
 Server Status:
 Port: ${port}
-URL: http://localhost:${port}
 MongoDB: Connected
 JWT Secret: ${process.env.JWT_SECRET ? 'Configured' : 'Missing'}
-Email: ${process.env.gmail ? 'Configured' : 'Missing'}
+Email: ${emailConfigured ? 'Configured' : 'Missing'}
+FRONTEND_URL: ${process.env.FRONTEND_URL || 'Not set (CORS will block production frontend)'}
+Health: GET /health
             `);
         });
 
@@ -80,16 +85,6 @@ Email: ${process.env.gmail ? 'Configured' : 'Missing'}
                 console.error(`Port ${port} is already in use`);
             }
             process.exit(1);
-        });
-
-        // Add health check endpoint
-        app.get('/health', (req, res) => {
-            res.json({
-                status: 'up',
-                port: port,
-                mongodb: isConnected() ? 'Connected' : 'Disconnected',
-                timestamp: new Date().toISOString()
-            });
         });
 
     } catch (error) {
